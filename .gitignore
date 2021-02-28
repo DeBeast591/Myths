@@ -1,0 +1,9 @@
+# development builds, no need for that to be on Github,
+#we can just use the releases and tags system.
+bin
+# build SH script, quality of life for me (Beast)
+/debug_build
+# release SH script, also QoL for me (Beast)
+/release_build
+# for clangd. QoL again for me (Beast)
+/compile_commands.json
