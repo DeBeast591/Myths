@@ -3,6 +3,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_video.h>
+
 #include <iostream>
 #include <vector>
 
@@ -10,6 +12,7 @@
 #include "Entity.hpp"
 #include "Utils.hpp"
 
+// Main
 int main(int argv, char* args[]) {
     std::cout << "Starting Myths." << std::endl;
 
@@ -22,24 +25,34 @@ int main(int argv, char* args[]) {
     if (!(IMG_Init(IMG_INIT_PNG)))
         std::cout << "IMG_Init HAS FAILED!\tERROR: " << SDL_GetError() << std::endl;
 
-
     // render the window
-    RenderWindow window("Myths (DEV COPY) (vB_1.0)", 1280, 720);
+    RenderWindow window("Myths (DEV COPY) (vB_1.0)", 1200, 720);
+
+    // most all of the variables
+    int groundToRender = 59;
 
     // get window refresh rate
     //int windowRefreshRate = window.getRefreshRate();
     std::cout << "Display Refresh Rate: " << window.getRefreshRate() << std::endl;
 
-
     // images
     SDL_Texture* img_groundTexture = window.loadTexture("res/images/tiles/ground_general.png");
 
     // entities
-    std::vector<Entity> entities = {
-        Entity(Vector2f(0, 0), img_groundTexture),
-        Entity(Vector2f(30, 0), img_groundTexture),
-        Entity(Vector2f(60, 0), img_groundTexture)
-    };
+    std::vector<Entity> entities = {};
+    std::vector<Entity> ground = {};
+
+    // gen all the ground entities
+    int posx = 0;
+    int posy = 0;
+    for (int i = 0; i <= groundToRender; i++) {
+        ground.push_back(Entity(Vector2f(posx, posy), img_groundTexture));
+        posx += 30;
+        if (posx >= 300) {
+            posx = 0;
+            posy += 30;
+        }
+    }
 
     // game running?
     bool gameRunning = true;
@@ -53,14 +66,14 @@ int main(int argv, char* args[]) {
     const float timeStep = 0.01;
     // percent until the game should update
     float accumulator = 0.0f;
-    float currentTime = utils::hireTimeInSes();
+    float currentTime = utils::hireTimeInSecs();
 
     // Loop
     while (gameRunning) {
 
         int startTicks = SDL_GetTicks();
 
-        float newTime = utils::hireTimeInSes();
+        float newTime = utils::hireTimeInSecs();
         float frameTime = newTime - currentTime;
 
         currentTime = newTime;
@@ -72,14 +85,14 @@ int main(int argv, char* args[]) {
             }
             
             // get controls + events
-            while (SDL_PollEvent(&event)) {
-                // more stopping the game
-                if (event.type == SDL_QUIT)
-                    gameRunning = false;
-                
-                // event more stopping the game
-                if (event.type == SDL_KEYDOWN)
-                    gameRunning = false;
+            if (SDL_PollEvent(&event)) {
+                if(event.type == SDL_WINDOWEVENT) {
+                    if(event.window.event == SDL_WINDOWEVENT_CLOSE) {
+                        std::cout << "SDL Window Event - Close" << std::endl;
+                        gameRunning = false;
+                        break;
+                    }
+                }
             }
 
             accumulator -= frameTime;
@@ -94,7 +107,7 @@ int main(int argv, char* args[]) {
         window.clear();
 
         // render everything
-        for (Entity& e : entities) {
+        for (Entity& e : ground) {
             window.render(e);
         }
 
@@ -107,7 +120,8 @@ int main(int argv, char* args[]) {
             SDL_Delay(1000 / window.getRefreshRate());
         }
 
-        // std::cout << utils::hireTimeInSes() << std::endl;
+        // debug
+        // std::cout << utils::hireTimeInSecs() << std::endl;
     }
 
 
@@ -115,7 +129,6 @@ int main(int argv, char* args[]) {
     std::cout << "Exiting..." << std::endl;
     window.cleanUp();
     SDL_Quit();
-
     std::cout << "Exited" << std::endl;
     return 0;
 }
