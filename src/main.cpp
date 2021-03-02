@@ -1,11 +1,12 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_hints.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_video.h>
+// #include <SDL2/SDL_events.h>
+// #include <SDL2/SDL_hints.h>
+// #include <SDL2/SDL_image.h>
+// #include <SDL2/SDL_keycode.h>
+// #include <SDL2/SDL_mouse.h>
+// #include <SDL2/SDL_render.h>
+// #include <SDL2/SDL_timer.h>
+// #include <SDL2/SDL_video.h>
 
 #include <iostream>
 #include <vector>
@@ -31,7 +32,7 @@ int main(int argv, char* args[]) {
     RenderWindow window("Myths (DEV COPY) (vB_1.0)", 1280, 720);
 
     // most all of the variables
-    int groundToRender = 59;
+    int groundToRender = 590;
 
     // get window refresh rate
     //int windowRefreshRate = window.getRefreshRate();
@@ -41,14 +42,16 @@ int main(int argv, char* args[]) {
     SDL_Texture* img_groundTexture = window.loadTexture("res/images/tiles/ground_general.png");
     SDL_Texture* img_playerTextureNormal = window.loadTexture("res/images/player/move/Player_Move_Normal.png");
     SDL_Texture* img_septicTank = window.loadTexture("res/images/tiles/septic_tank.gif");
+    SDL_Texture* img_beta_exodus = window.loadTexture("res/images/weapons/guns/endgame/b_exodus.png");
 
     // entities
     std::vector<Entity> entities = {};
     std::vector<Entity> ground = {};
     std::vector<Entity> tiles = {};
 
-    Entity player(Vector2f(0, 0), img_playerTextureNormal);
+    Entity player(Vector2f(100, 100), img_playerTextureNormal);
     player.setSpeed(2.0);
+    Entity heldWeapon(Vector2f(player.getPos().x, player.getPos().y), img_beta_exodus);
 
     // gen all the ground entities
     int posx = 10;
@@ -56,7 +59,7 @@ int main(int argv, char* args[]) {
     for (int i = 0; i <= groundToRender; i++) {
         ground.push_back(Entity(Vector2f(posx, posy), img_groundTexture));
         posx += 30;
-        if (posx >= 300) {
+        if (posx >= 630) {
             posx = 10;
             posy += 30;
         }
@@ -68,7 +71,7 @@ int main(int argv, char* args[]) {
     // game running?
     bool gameRunning = true;
 
-    // this thing
+    // this thing (event)
     SDL_Event event;
 
     // timeStep = {value} updates / second
@@ -128,13 +131,29 @@ int main(int argv, char* args[]) {
                 }
             }
 
-            player.updatePos();
+            // move the weapon
+            heldWeapon.setPos(Vector2f((player.getPos().x * 3.5), (player.getPos().y * 3.5)));
 
             // debug
             // player.getPos().print();
 
             accumulator -= frameTime;
         }
+
+        // mouse things
+        int mx , my;
+        SDL_GetMouseState(&mx,&my);
+        Vector2f mouse;
+        mouse.x = (float)mx;
+        mouse.y =(float)my;
+        // Vector2f aim = Vector2f(mouse.x - player.getPos().x, mouse.y - player.getPos().y);
+        // Vector2f norm = Vector2f(aim.x / sqrt(pow(aim.x, 2) + sqrt(pow(aim.y,2)) ,aim.y / sqrt(pow(aim.x, 2) + pow(aim.y,2)));
+        // norm.print();
+        // float rot = (atan2f(mouse.y - player.getPos().y, mouse.x - player.getPos().x)) * (180.0f / 3.14);
+        // player.Rotate((atan2f(events.mouseMove.y - player.getPos().y, events.mouseMove.x - player.getPos().x)) * (180.0f / 3.14);
+        float rot = (atan2f(my - player.getPos().y,
+                mx - player.getPos().x)
+                ) * (180.0f / 3.14);
         
 
         // the time left until the accumulator fills up
@@ -152,6 +171,8 @@ int main(int argv, char* args[]) {
         for (Entity& e : tiles)
             window.render(e);
         window.render(player);
+        // window.render(heldWeapon, 0.5);
+        window.renderWithRotate(heldWeapon, rot);
         
         // update the window
         window.display();

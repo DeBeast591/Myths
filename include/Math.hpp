@@ -1,4 +1,3 @@
-#include <SDL2/SDL_error.h>
 #pragma once
 #include <iostream>
 

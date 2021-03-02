@@ -14,6 +14,8 @@ class RenderWindow {
         void cleanUp();
         void clear();
         void render(Entity& p_entity);
+        void render(Entity& p_entity, float p_scale);
+        void renderWithRotate(Entity& p_entity, float p_angle);
         void display();
     private:
         SDL_Window* window;
