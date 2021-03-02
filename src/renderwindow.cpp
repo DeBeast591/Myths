@@ -90,8 +90,8 @@ void RenderWindow::renderWithRotate(Entity& p_entity, float p_angle) {
     dest.w = p_entity.getCurFrame().w * 0.5;
     dest.h = p_entity.getCurFrame().h * 0.5;
 
-    // SDL_RenderCopy(renderer, p_entity.getTexture(), &src, &dest);
-    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, 90.0, NULL, SDL_FLIP_HORIZONTAL);
+    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, p_angle, NULL, SDL_FLIP_NONE);
+
 }
 
 void RenderWindow::display() {

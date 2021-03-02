@@ -131,6 +131,8 @@ int main(int argv, char* args[]) {
                 }
             }
 
+            // update the player
+            player.updatePos();
             // move the weapon
             heldWeapon.setPos(Vector2f((player.getPos().x * 3.5), (player.getPos().y * 3.5)));
 
