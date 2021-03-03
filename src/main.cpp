@@ -90,6 +90,9 @@ int main(int argv, char* args[]) {
         float newTime = utils::hireTimeInSecs();
         float frameTime = newTime - currentTime;
 
+        int mx, my;
+        float rot;
+
         currentTime = newTime;
         accumulator += frameTime;
         while (accumulator >= timeStep) {
@@ -107,6 +110,7 @@ int main(int argv, char* args[]) {
                         break;
                     }
                 }
+
 
                 if (event.type == SDL_KEYDOWN) {
                     if (event.key.keysym.sym == SDLK_a)
@@ -129,6 +133,9 @@ int main(int argv, char* args[]) {
                     if (event.key.keysym.sym == SDLK_s)
                         player.setVelY(0);
                 }
+                
+                SDL_GetMouseState(&mx, &my);
+                rot = (atan2f(my - player.getPos().y, mx - player.getPos().x)) * (180.0f / 3.14);
             }
 
             // update the player
@@ -141,23 +148,7 @@ int main(int argv, char* args[]) {
 
             accumulator -= frameTime;
         }
-
-        // mouse things
-        int mx , my;
-        SDL_GetMouseState(&mx,&my);
-        Vector2f mouse;
-        mouse.x = (float)mx;
-        mouse.y =(float)my;
-        // Vector2f aim = Vector2f(mouse.x - player.getPos().x, mouse.y - player.getPos().y);
-        // Vector2f norm = Vector2f(aim.x / sqrt(pow(aim.x, 2) + sqrt(pow(aim.y,2)) ,aim.y / sqrt(pow(aim.x, 2) + pow(aim.y,2)));
-        // norm.print();
-        // float rot = (atan2f(mouse.y - player.getPos().y, mouse.x - player.getPos().x)) * (180.0f / 3.14);
-        // player.Rotate((atan2f(events.mouseMove.y - player.getPos().y, events.mouseMove.x - player.getPos().x)) * (180.0f / 3.14);
-        float rot = (atan2f(my - player.getPos().y,
-                mx - player.getPos().x)
-                ) * (180.0f / 3.14);
         
-
         // the time left until the accumulator fills up
         // in percent
         // const float alpha = accumulator / timeStep;
