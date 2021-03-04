@@ -102,7 +102,7 @@ int main(int argv, char* args[]) {
             }
             
             // get controls + events
-            if (SDL_PollEvent(&event)) {
+            while (SDL_PollEvent(&event)) {
                 if(event.type == SDL_WINDOWEVENT) {
                     if(event.window.event == SDL_WINDOWEVENT_CLOSE) {
                         std::cout << "SDL Window Event - Close" << std::endl;
@@ -138,10 +138,6 @@ int main(int argv, char* args[]) {
                 rot = (atan2f(my - player.getPos().y, mx - player.getPos().x)) * (180.0f / 3.14);
             }
 
-            // update the player
-            player.updatePos();
-            // move the weapon
-            heldWeapon.setPos(Vector2f((player.getPos().x * 3.5), (player.getPos().y * 3.5)));
 
             // debug
             // player.getPos().print();
@@ -155,6 +151,11 @@ int main(int argv, char* args[]) {
 
         // clean the window
         window.clear();
+        
+        // update the player
+        player.updatePos();
+        // move the weapon
+        heldWeapon.setPos(Vector2f((player.getPos().x * 3.5), (player.getPos().y * 3.5)));
 
         // render everything
         for (Entity& e : ground)
@@ -165,7 +166,7 @@ int main(int argv, char* args[]) {
             window.render(e);
         window.render(player);
         // window.render(heldWeapon, 0.5);
-        window.renderWithRotate(heldWeapon, rot);
+        window.render(heldWeapon, 0.5, rot);
         
         // update the window
         window.display();

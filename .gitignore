@@ -1,5 +1,7 @@
 # development builds, no need for that to be on Github,
 #we can just use the releases and tags system.
+# This also forces- err- makes people use their brains
+#to compile it on their own, because I'm mean.
 bin
 # build SH script, quality of life for me (Beast)
 /debug_build

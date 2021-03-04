@@ -58,7 +58,8 @@ void RenderWindow::render(Entity& p_entity) {
     dest.w = p_entity.getCurFrame().w * 2;
     dest.h = p_entity.getCurFrame().h * 2;
 
-    SDL_RenderCopy(renderer, p_entity.getTexture(), &src, &dest);
+    // SDL_RenderCopy(renderer, p_entity.getTexture(), &src, &dest);
+    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, 0.0, NULL, SDL_FLIP_NONE);
 }
 
 void RenderWindow::render(Entity& p_entity, float p_scale) {
@@ -74,10 +75,11 @@ void RenderWindow::render(Entity& p_entity, float p_scale) {
     dest.w = p_entity.getCurFrame().w * p_scale;
     dest.h = p_entity.getCurFrame().h * p_scale;
 
-    SDL_RenderCopy(renderer, p_entity.getTexture(), &src, &dest);
+    // SDL_RenderCopy(renderer, p_entity.getTexture(), &src, &dest);
+    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, 0.0, NULL, SDL_FLIP_NONE);
 }
 
-void RenderWindow::renderWithRotate(Entity& p_entity, float p_angle) {
+void RenderWindow::render(Entity& p_entity, float p_scale, float p_rot) {
     SDL_Rect src;
     src.x = p_entity.getCurFrame().x;
     src.y = p_entity.getCurFrame().y;
@@ -85,13 +87,13 @@ void RenderWindow::renderWithRotate(Entity& p_entity, float p_angle) {
     src.h = p_entity.getCurFrame().h;
 
     SDL_Rect dest;
-    dest.x = p_entity.getPos().x * 0.5;
-    dest.y = p_entity.getPos().y * 0.5;
-    dest.w = p_entity.getCurFrame().w * 0.5;
-    dest.h = p_entity.getCurFrame().h * 0.5;
+    dest.x = p_entity.getPos().x * p_scale;
+    dest.y = p_entity.getPos().y * p_scale;
+    dest.w = p_entity.getCurFrame().w * p_scale;
+    dest.h = p_entity.getCurFrame().h * p_scale;
 
-    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, p_angle, NULL, SDL_FLIP_NONE);
-
+    // SDL_RenderCopy(renderer, p_entity.getTexture(), &src, &dest);
+    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, p_rot, NULL, SDL_FLIP_NONE);
 }
 
 void RenderWindow::display() {
