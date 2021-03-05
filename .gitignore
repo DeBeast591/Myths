@@ -9,3 +9,8 @@ bin
 /release_build
 # for clangd. QoL again for me (Beast)
 /compile_commands.json
+# windows build SH script, again, QoL for me (Beast)
+/windows_debug_build
+# windows relase build SH script, again again
+#QoL for me (Beast)
+/windows_release_build

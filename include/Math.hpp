@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include <iostream>
 
 struct Vector2f {
@@ -13,6 +14,18 @@ struct Vector2f {
 
     void print() {
         std::cout << x << ", " << y << std::endl;
+    }
+
+    void printAsInt() {
+        std::cout << std::round(x) << ", " << std::round(y) << std::endl;
+    }
+
+    int getXInt() {
+        return std::round(x);
+    }
+
+    int getYInt() {
+        return std::round(y);
     }
 
     float x, y;

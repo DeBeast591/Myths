@@ -1,3 +1,4 @@
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <iostream>
@@ -79,7 +80,7 @@ void RenderWindow::render(Entity& p_entity, float p_scale) {
     SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, 0.0, NULL, SDL_FLIP_NONE);
 }
 
-void RenderWindow::render(Entity& p_entity, float p_scale, float p_rot) {
+void RenderWindow::renderRot(Entity& p_entity, float p_scale, float p_rot, SDL_Point* center) {
     SDL_Rect src;
     src.x = p_entity.getCurFrame().x;
     src.y = p_entity.getCurFrame().y;
@@ -93,7 +94,7 @@ void RenderWindow::render(Entity& p_entity, float p_scale, float p_rot) {
     dest.h = p_entity.getCurFrame().h * p_scale;
 
     // SDL_RenderCopy(renderer, p_entity.getTexture(), &src, &dest);
-    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, p_rot, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, p_entity.getTexture(), &src, &dest, p_rot, center, SDL_FLIP_NONE);
 }
 
 void RenderWindow::display() {

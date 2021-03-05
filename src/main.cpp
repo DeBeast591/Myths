@@ -8,12 +8,32 @@
 // #include <SDL2/SDL_timer.h>
 // #include <SDL2/SDL_video.h>
 
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 #include "RenderWindow.hpp"
 #include "Entity.hpp"
 #include "Utils.hpp"
+
+
+std::vector<Entity> genGround(SDL_Texture* texture) {
+    std::vector<Entity> ground = {};
+    // gen all the ground entities
+    int posx = 10;
+    int posy = 0;
+    for (int i = 0; i <= 590; i++) {
+        ground.push_back(Entity(Vector2f(posx, posy), texture));
+        posx += 30;
+        if (posx >= 630) {
+            posx = 10;
+            posy += 30;
+        }
+    }
+    return ground;
+}
 
 // Main
 int main(int argv, char* args[]) {
@@ -31,18 +51,16 @@ int main(int argv, char* args[]) {
     // render the window
     RenderWindow window("Myths (DEV COPY) (vB_1.0)", 1280, 720);
 
-    // most all of the variables
-    int groundToRender = 590;
-
     // get window refresh rate
     //int windowRefreshRate = window.getRefreshRate();
     std::cout << "Display Refresh Rate: " << window.getRefreshRate() << std::endl;
 
     // images
-    SDL_Texture* img_groundTexture = window.loadTexture("res/images/tiles/ground_general.png");
+    SDL_Texture* img_groundTexture = window.loadTexture("res/images/tiles/xahanns_textures/xahann_stonetile.png");
+    SDL_Texture* img_woodTexture = window.loadTexture("res/images/tiles/xahanns_textures/xahann_woodtile.png");
     SDL_Texture* img_playerTextureNormal = window.loadTexture("res/images/player/move/Player_Move_Normal.png");
-    SDL_Texture* img_septicTank = window.loadTexture("res/images/tiles/septic_tank.gif");
-    SDL_Texture* img_beta_exodus = window.loadTexture("res/images/weapons/guns/endgame/b_exodus.png");
+    SDL_Texture* img_septicTank = window.loadTexture("res/images/tiles/beasts_textures/septic_tank.gif");
+    SDL_Texture* img_beta_exodus = window.loadTexture("res/images/weapons/guns/endgame/beast_beta_exodus.png");
 
     // entities
     std::vector<Entity> entities = {};
@@ -51,19 +69,10 @@ int main(int argv, char* args[]) {
 
     Entity player(Vector2f(100, 100), img_playerTextureNormal);
     player.setSpeed(2.0);
-    Entity heldWeapon(Vector2f(player.getPos().x, player.getPos().y), img_beta_exodus);
+    float weaponMoveScale = 4;
+    Entity heldWeapon(Vector2f(player.getPos().x * weaponMoveScale + 64, player.getPos().y * weaponMoveScale + 32), img_beta_exodus);
 
-    // gen all the ground entities
-    int posx = 10;
-    int posy = 0;
-    for (int i = 0; i <= groundToRender; i++) {
-        ground.push_back(Entity(Vector2f(posx, posy), img_groundTexture));
-        posx += 30;
-        if (posx >= 630) {
-            posx = 10;
-            posy += 30;
-        }
-    }
+    ground = genGround(img_groundTexture);
 
     // gen the tiles
     tiles.push_back(Entity(Vector2f(10, 0), img_septicTank));
@@ -121,6 +130,9 @@ int main(int argv, char* args[]) {
                         player.setVelY(-player.getSpeed());
                     if (event.key.keysym.sym == SDLK_s)
                         player.setVelY(player.getSpeed());
+                    
+                    if (event.key.keysym.sym == SDLK_SPACE)
+                        ground = genGround(img_woodTexture);
                 }
 
                 if (event.type == SDL_KEYUP) {
@@ -136,6 +148,10 @@ int main(int argv, char* args[]) {
                 
                 SDL_GetMouseState(&mx, &my);
                 rot = (atan2f(my - player.getPos().y, mx - player.getPos().x)) * (180.0f / 3.14);
+
+                if (SDL_GetMouseState(&mx, &my) == 1) {
+                    std::cout << "CLICK!" << std::endl;
+                }
             }
 
 
@@ -155,7 +171,7 @@ int main(int argv, char* args[]) {
         // update the player
         player.updatePos();
         // move the weapon
-        heldWeapon.setPos(Vector2f((player.getPos().x * 3.5), (player.getPos().y * 3.5)));
+        heldWeapon.setPos(Vector2f((player.getPos().x * weaponMoveScale + 64), (player.getPos().y * weaponMoveScale + 32)));
 
         // render everything
         for (Entity& e : ground)
@@ -166,7 +182,9 @@ int main(int argv, char* args[]) {
             window.render(e);
         window.render(player);
         // window.render(heldWeapon, 0.5);
-        window.render(heldWeapon, 0.5, rot);
+        // SDL_Point playerMouseRotThingy = {player.getPos().getXInt(), player.getPos().getYInt()};
+        SDL_Point playerMouseRotThingy = {static_cast<int>(player.getPos().x), static_cast<int>(player.getPos().y)};
+        window.renderRot(heldWeapon, 0.5, rot, &playerMouseRotThingy);
         
         // update the window
         window.display();
