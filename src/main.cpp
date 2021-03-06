@@ -19,6 +19,9 @@
 #include "Utils.hpp"
 
 
+#define ARM_LEN     15
+
+
 std::vector<Entity> genGround(SDL_Texture* texture) {
     std::vector<Entity> ground = {};
     // gen all the ground entities
@@ -146,9 +149,6 @@ int main(int argv, char* args[]) {
                         player.setVelY(0);
                 }
                 
-                SDL_GetMouseState(&mx, &my);
-                rot = (atan2f(my - player.getPos().y, mx - player.getPos().x)) * (180.0f / 3.14);
-
                 if (SDL_GetMouseState(&mx, &my) == 1) {
                     std::cout << "CLICK!" << std::endl;
                 }
@@ -170,8 +170,15 @@ int main(int argv, char* args[]) {
         
         // update the player
         player.updatePos();
+        // calculate weapon rotation
+        SDL_GetMouseState(&mx, &my);
+        rot = (atan2f(my - (2*player.getPos().y+32), mx - (2*player.getPos().x)-32)) * (180.0f / 3.14);
         // move the weapon
-        heldWeapon.setPos(Vector2f((player.getPos().x * weaponMoveScale + 64), (player.getPos().y * weaponMoveScale + 32)));
+        //heldWeapon.setPos(Vector2f((player.getPos().x * weaponMoveScale + 64), (player.getPos().y * weaponMoveScale + 32)));
+        heldWeapon.setPos(Vector2f(
+            weaponMoveScale*(player.getPos().x+16-4 + ARM_LEN),
+            weaponMoveScale*(player.getPos().y+16-4)
+            ));
 
         // render everything
         for (Entity& e : ground)
@@ -183,7 +190,10 @@ int main(int argv, char* args[]) {
         window.render(player);
         // window.render(heldWeapon, 0.5);
         // SDL_Point playerMouseRotThingy = {player.getPos().getXInt(), player.getPos().getYInt()};
-        SDL_Point playerMouseRotThingy = {static_cast<int>(player.getPos().x), static_cast<int>(player.getPos().y)};
+        SDL_Point playerMouseRotThingy = {
+            static_cast<int>(heldWeapon.getCurFrame().w/4 - ARM_LEN*2),
+            static_cast<int>(heldWeapon.getCurFrame().h/4)
+        };
         window.renderRot(heldWeapon, 0.5, rot, &playerMouseRotThingy);
         
         // update the window
