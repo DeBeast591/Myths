@@ -14,3 +14,7 @@ bin
 # windows relase build SH script, again again
 #QoL for me (Beast)
 /windows_release_build
+
+*.o
+*.exe
+.vscode/
